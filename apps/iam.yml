@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  iam:
+    extends:
+      file: environment.yml
+      service: iam-vars
+    image: turnly/iam:latest
+    command: start --import-realm
+    depends_on:
+      postgres: # Disable this if you are using an external Postgres database
+        condition: service_healthy
+    networks:
+      turnly.network.public:
+      turnly.network.internal:
+        aliases:
+          - iam.turnly.local
+    healthcheck:
+      test: curl --fail http://iam.turnly.local:8080/realms/master
+      interval: 20s
+      timeout: 60s
+      retries: 15
+      start_period: 10s
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.iam-public.entrypoints=web,websecure
+      - traefik.http.routers.iam-public.service=iam-public
+      - traefik.http.services.iam-public.loadbalancer.server.port=8080
+      - traefik.http.routers.iam-public.rule=Host(`${IAM_HOSTNAME}`) && PathPrefix(`/admin`, `/js`, `/realms`, `/resources`, `/robots.txt`)
+      - traefik.http.routers.iam-public.middlewares=error-pages-middleware

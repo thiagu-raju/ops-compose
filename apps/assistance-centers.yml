@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  assistance-centers:
+    extends:
+      file: environment.yml
+      service: app-vars
+    image: turnly/assistance-centers:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+      mongo: # Disable this if you are using an external Mongo database
+        condition: service_healthy
+    networks:
+      turnly.network.internal:
+        aliases:
+          - assistance-centers.turnly.local
+    environment:
+      APP_NAME: assistance-centers
+      ENCRYPTION_SECRET:
+      MONGO_DB: ${ASSISTANCE_CENTERS_MONGO_DB:-assistance_centers_db}
+      RABBITMQ_QUEUE: ${ASSISTANCE_CENTERS_RABBITMQ_QUEUE:-turnly.ms.assistance_centers.queue}

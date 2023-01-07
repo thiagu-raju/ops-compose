@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  widgets-realtime-api:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: turnly/widgets-realtime-api:latest
+    depends_on:
+      iam:
+        condition: service_healthy
+    networks:
+      turnly.network.public:
+      turnly.network.internal:
+        aliases:
+          - widgets-realtime-api.turnly.local
+    environment:
+      APP_NAME: widgets-realtime-api
+      RABBITMQ_QUEUE: ${WIDGETS_REALTIME_API_RABBITMQ_QUEUE:-turnly.ms.widgets_realtime_api.queue}
+      RABBITMQ_URI: ${RABBITMQ_URI}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.widgets-realtime-api.entrypoints=web,websecure
+      - traefik.http.routers.widgets-realtime-api.rule=PathPrefix(`/api/rtm/widgets`)
+      - traefik.http.routers.widgets-realtime-api.service=widgets-realtime-api
+      - traefik.http.services.widgets-realtime-api.loadbalancer.server.port=${APP_PORT}

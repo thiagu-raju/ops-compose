@@ -1,0 +1,104 @@
+version: '3.9'
+
+x-common: &common
+  restart: unless-stopped
+  networks:
+    - turnly.network.internal
+  logging:
+    driver: "json-file"
+    options:
+      max-file: 3
+      max-size: 10m
+
+x-shared-vars: &shared-vars
+  NODE_ENV: ${NODE_ENV}
+  APP_PORT: ${APP_PORT}
+  SENTRY_DSN: ${SENTRY_DSN}
+  FLUENT_HOST: ${FLUENT_HOST}
+  FLUENT_PORT: ${FLUENT_PORT}
+  ELASTICSEARCH_URI: ${ELASTICSEARCH_URI}
+  LOGGING_LEVEL: ${LOGGING_LEVEL}
+  TRACING_ENDPOINT: ${TRACING_ENDPOINT}
+
+services:
+  common-vars:
+    <<: *common
+    environment:
+      <<: *shared-vars
+
+  app-vars:
+    <<: *common
+    environment:
+      <<: *shared-vars
+      RPC_BIND_ADDRESS: ${RPC_BIND_ADDRESS}
+      MONGO_URI: ${MONGO_URI}
+      RABBITMQ_URI: ${RABBITMQ_URI}
+      RABBITMQ_EXCHANGE: ${RABBITMQ_EXCHANGE}
+      DB_DEBUG: ${DB_DEBUG}
+
+  oauth-vars:
+    <<: *common
+    environment:
+      <<: *shared-vars
+      APP_NAME: oauth
+
+      COOKIE_DOMAIN: ${APP_DOMAIN}
+      AUTH_HOST: ${IAM_HOSTNAME}
+      FORWARD_TOKEN_HEADER_NAME: X-Forwarded-Auth-Token
+      REDIS_URL: "${REDIS_HOST}:${REDIS_PORT}"
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: 0
+
+      PROVIDER_URI: ${OAUTH_OIDC_PROVIDER_URI}
+      CLIENT_ID: ${OAUTH_OIDC_CLIENT_ID}
+      CLIENT_SECRET: ${OAUTH_OIDC_CLIENT_SECRET}
+      ENCRYPTION_KEY: ${OAUTH_ENCRYPTION_KEY}
+      SECRET: ${OAUTH_SIGNING_KEY}
+      URL_PATH: /_oauth
+      LIFETIME: ${OAUTH_COOKIES_EXPIRES:-300} # The time in seconds
+
+  oauth-admin-vars:
+    <<: *common
+    environment:
+      <<: *shared-vars
+      APP_NAME: oauth
+
+      COOKIE_DOMAIN: ${APP_DOMAIN}
+      AUTH_HOST: ${IAM_HOSTNAME}
+      FORWARD_TOKEN_HEADER_NAME: X-Forwarded-Auth-Token
+      REDIS_URL: "${REDIS_HOST}:${REDIS_PORT}"
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DB: 0
+
+      PROVIDER_URI: ${OAUTH_ADMIN_OIDC_PROVIDER_URI}
+      CLIENT_ID: ${OAUTH_ADMIN_OIDC_CLIENT_ID}
+      CLIENT_SECRET: ${OAUTH_ADMIN_OIDC_CLIENT_SECRET}
+      ENCRYPTION_KEY: ${OAUTH_ADMIN_ENCRYPTION_KEY}
+      SECRET: ${OAUTH_ADMIN_SIGNING_KEY}
+      URL_PATH: /_oauth-admin
+      LIFETIME: ${OAUTH_ADMIN_COOKIES_EXPIRES:-60} # The time in seconds
+
+  iam-vars:
+    <<: *common
+    environment:
+      <<: *shared-vars
+      APP_NAME: iam
+
+      # Credentials for storing into an external database (postgres)
+      KC_DB: postgres
+      KC_DB_URL_HOST: ${IAM_DB_HOST}
+      KC_DB_URL_PORT: ${IAM_DB_PORT}
+      KC_DB_URL_DATABASE: ${IAM_DB_DATABASE}
+      KC_DB_SCHEMA: ${IAM_DB_SCHEMA}
+      KC_DB_USERNAME: ${IAM_DB_USERNAME}
+      KC_DB_PASSWORD: ${IAM_DB_PASSWORD}
+
+      # Proxy settings
+      KC_HOSTNAME: ${IAM_HOSTNAME}
+
+      # Credentials for admin account
+      KEYCLOAK_ADMIN: ${IAM_ADMIN_USERNAME}
+      KEYCLOAK_ADMIN_PASSWORD: ${IAM_ADMIN_PASSWORD}
+
+      JAVA_TOOL_OPTIONS: -Dsun.security.krb5.debug=true -Dsun.security.spenego.degug=true -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8790 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dquarkus-log-max-startup-records=10000
+      JAVA_OPTS: -server -Xms512m -Xmx2048m -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true

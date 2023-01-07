@@ -1,0 +1,29 @@
+version: '3.9'
+
+# Delete postgres-ui.yml (this) file if you are using an external Postgres database
+services:
+  postgres_ui:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: adminer:4.8.1
+    networks:
+      - turnly.network.public
+      - turnly.network.internal
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres.turnly.local
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.postgres-public.entrypoints=postgres
+      - traefik.http.routers.postgres-public.service=postgres-public
+      - traefik.http.routers.postgres-public.rule=Host(`${APP_INFRA_DOMAIN}`)
+      - traefik.http.services.postgres-public.loadbalancer.server.port=8080
+
+      # Attach the OAuth-middleware to this service
+      - traefik.http.routers.postgres-public.middlewares=oauth-admin-middleware
+

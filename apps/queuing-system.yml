@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  queuing-system:
+    extends:
+      file: environment.yml
+      service: app-vars
+    image: turnly/queuing-system:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+      mongo: # Disable this if you are using an external Mongo database
+        condition: service_healthy
+    networks:
+      turnly.network.internal:
+        aliases:
+          - queuing-system.turnly.local
+    environment:
+      # This service shared env variables that extend from common.yml
+      APP_NAME: queuing-system
+      ENCRYPTION_SECRET:
+      MONGO_DB: ${QUEUING_SYSTEM_MONGO_DB:-queuing_system_db}
+      RABBITMQ_QUEUE: ${QUEUING_SYSTEM_RABBITMQ_QUEUE:-turnly.ms.queuing_system.queue}

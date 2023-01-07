@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  teams:
+    extends:
+      file: environment.yml
+      service: app-vars
+    image: turnly/teams:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+      mongo: # Disable this if you are using an external Mongo database
+        condition: service_healthy
+    networks:
+      turnly.network.internal:
+        aliases:
+          - teams.turnly.local
+    environment:
+      APP_NAME: teams
+      ENCRYPTION_SECRET:
+      MONGO_DB: ${TEAMS_MONGO_DB:-teams_db}
+      RABBITMQ_QUEUE: ${TEAMS_RABBITMQ_QUEUE:-turnly.ms.teams.queue}

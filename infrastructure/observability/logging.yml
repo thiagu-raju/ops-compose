@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  fluentd:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: turnly/fluentd:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+    expose:
+      - 24224
+      - 24224/udp
+    networks:
+      turnly.network.internal:
+        aliases:
+          - logging.turnly.local

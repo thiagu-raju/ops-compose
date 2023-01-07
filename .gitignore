@@ -1,0 +1,8 @@
+.DS_Store
+
+# Environments
+.env*
+!.env.example
+
+# Certs
+letsencrypt/

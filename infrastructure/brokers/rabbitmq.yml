@@ -1,0 +1,39 @@
+version: '3.9'
+
+# Delete rabbitmq.yml (this) file if you are using an external RabbitMQ provider
+services:
+  rabbitmq:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: rabbitmq:3.10.5-management-alpine
+    tty: true
+    stdin_open: true
+    expose:
+      - 5672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/mnesia/
+    networks:
+      turnly.network.public:
+      turnly.network.internal:
+        aliases:
+          - rabbitmq.turnly.local
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'ping', '--silent']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.rabbitmq-public.entrypoints=rabbitmq
+      - traefik.http.routers.rabbitmq-public.service=rabbitmq-public
+      - traefik.http.routers.rabbitmq-public.rule=Host(`${APP_INFRA_DOMAIN}`)
+      - traefik.http.services.rabbitmq-public.loadbalancer.server.port=15672
+
+      # Attach the OAuth-middleware to this service
+      - traefik.http.routers.rabbitmq-public.middlewares=oauth-admin-middleware
+
+volumes:
+  rabbitmq_data:

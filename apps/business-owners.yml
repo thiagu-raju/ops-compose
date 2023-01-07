@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  business-owners:
+    extends:
+      file: environment.yml
+      service: app-vars
+    image: turnly/business-owners:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+      mongo: # Disable this if you are using an external Mongo database
+        condition: service_healthy
+    networks:
+      turnly.network.internal:
+        aliases:
+          - business-owners.turnly.local
+    environment:
+      APP_NAME: business-owners
+      ENCRYPTION_SECRET:
+      MONGO_DB: ${BUSINESS_OWNERS_MONGO_DB:-business_owners_db}
+      RABBITMQ_QUEUE: ${BUSINESS_OWNERS_RABBITMQ_QUEUE:-turnly.ms.business_owners.queue}

@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  addons:
+    extends:
+      file: environment.yml
+      service: app-vars
+    image: turnly/addons:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+      mongo: # Disable this if you are using an external Mongo database
+        condition: service_healthy
+    networks:
+      turnly.network.internal:
+        aliases:
+          - addons.turnly.local
+    environment:
+      APP_NAME: addons
+      ENCRYPTION_SECRET:
+      MONGO_DB: ${ADDONS_MONGO_DB:-addons_db}
+      RABBITMQ_QUEUE: ${ADDONS_RABBITMQ_QUEUE:-turnly.ms.addons.queue}
+

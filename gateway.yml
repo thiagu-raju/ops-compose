@@ -1,0 +1,92 @@
+version: '3.9'
+
+services:
+  gateway:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: turnly/gateway:latest
+    command:
+      - --providers.docker
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=turnly.network.internal
+
+      # Default entrypoints
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+
+      # Global HTTP to HTTPS redirect
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+
+      # Enable TLS Certificates
+      - --certificatesresolvers.certs.acme.tlschallenge=true
+      - --certificatesresolvers.certs.acme.email=${CERTS_EMAIL}
+      - --certificatesresolvers.certs.acme.storage=/letsencrypt/acme.json
+
+      # Configure cert resolver for websecure
+      - --entrypoints.websecure.http.tls.certResolver=certs
+
+      # Optional - Expose monitoring and resource management services.
+      # WARNING: If you enable these ports, you must take your own security measures.
+      - --entrypoints.rabbitmq.address=:${RABBITMQ_UI_PORT}
+      - --entrypoints.kibana.address=:${ELASTICSEARCH_UI_PORT}
+      - --entrypoints.postgres.address=:${POSTGRES_ADMINER_PORT}
+      - --entrypoints.mongo.address=:${MONGO_UI_PORT}
+      - --entrypoints.redis.address=:${REDIS_UI_PORT}
+      - --entrypoints.storage.address=:${MINIO_UI_PORT}
+      - --entrypoints.tracing.address=:${TRACING_UI_PORT}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+    ports:
+      - 80:80
+      - 443:443
+
+      # Optional - Expose monitoring and resource management services.
+      - ${RABBITMQ_UI_PORT}:${RABBITMQ_UI_PORT}
+      - ${ELASTICSEARCH_UI_PORT}:${ELASTICSEARCH_UI_PORT}
+      - ${POSTGRES_ADMINER_PORT}:${POSTGRES_ADMINER_PORT}
+      - ${MONGO_UI_PORT}:${MONGO_UI_PORT}
+      - ${REDIS_UI_PORT}:${REDIS_UI_PORT}
+      - ${MINIO_UI_PORT}:${MINIO_UI_PORT}
+      - ${TRACING_UI_PORT}:${TRACING_UI_PORT}
+    networks:
+      turnly.network.public:
+      turnly.network.internal:
+        aliases:
+          - ${IAM_HOSTNAME}
+          - ${APP_DOMAIN}
+
+  error-pages:
+    image: tarampampam/error-pages:2.19.0
+    environment:
+      TEMPLATE_NAME: app-down
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.error-pages-router.tls.certresolver=certs
+
+      # use as "fallback" for any NON-registered services (with priority below normal)
+      - traefik.http.routers.error-pages-router.rule=HostRegexp(`{host:.+}`)
+      - traefik.http.routers.error-pages-router.priority=10
+
+      - traefik.http.routers.error-pages-router.entrypoints=websecure
+      - traefik.http.routers.error-pages-router.middlewares=error-pages-middleware
+
+      - traefik.http.middlewares.error-pages-middleware.errors.status=400-599
+      - traefik.http.middlewares.error-pages-middleware.errors.service=error-pages-service
+      - traefik.http.middlewares.error-pages-middleware.errors.query=/{status}.html
+      - traefik.http.services.error-pages-service.loadbalancer.server.port=8080
+    depends_on:
+      - gateway
+    networks:
+      - turnly.network.public
+      - turnly.network.internal
+
+networks:
+  turnly.network.internal:
+    name: turnly.network.internal
+  turnly.network.public:
+    name: turnly.network.public

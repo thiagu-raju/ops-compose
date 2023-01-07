@@ -1,0 +1,25 @@
+version: '3.9'
+
+# Delete redis.yml (this) file if you are using an external Redis database
+services:
+  redis:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: redis:7.0.4-alpine
+    volumes:
+      - redis_data:/data
+    expose:
+      - 6379
+    networks:
+      turnly.network.internal:
+        aliases:
+          - redis.turnly.local
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis_data:

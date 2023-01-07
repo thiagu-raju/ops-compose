@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  widgets-api:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: turnly/widgets-api:latest
+    depends_on:
+      - gateway
+    networks:
+      - turnly.network.public
+      - turnly.network.internal
+    environment:
+      APP_NAME: widgets-api
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.widgets-api-public.entrypoints=web,websecure
+      - traefik.http.routers.widgets-api-public.rule=PathPrefix(`/api/widgets`)
+      - traefik.http.routers.widgets-api-public.service=widgets-api-public
+      - traefik.http.services.widgets-api-public.loadbalancer.server.port=${APP_PORT}

@@ -1,0 +1,28 @@
+version: '3.9'
+
+# Delete kibana.yml (this) file if you are using an external ElasticSearch database
+services:
+  kibana:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: docker.elastic.co/kibana/kibana:7.17.4
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - turnly.network.public
+      - turnly.network.internal
+    environment:
+      ELASTICSEARCH_HOSTS: ${ELASTICSEARCH_URI}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.kibana-public.entrypoints=kibana
+      - traefik.http.routers.kibana-public.service=kibana-public
+      - traefik.http.routers.kibana-public.rule=Host(`${APP_INFRA_DOMAIN}`)
+      - traefik.http.services.kibana-public.loadbalancer.server.port=5601
+
+      # Attach the OAuth-middleware to this service
+      - traefik.http.routers.kibana-public.middlewares=oauth-admin-middleware

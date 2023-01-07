@@ -1,0 +1,30 @@
+version: '3.9'
+
+# Delete redis-ui.yml (this) file if you are using an external Redis database
+services:
+  redis_ui:
+    extends:
+      file: environment.yml
+      service: common-vars
+    hostname: redis_ui
+    image: ghcr.io/joeferner/redis-commander:latest
+    networks:
+      - turnly.network.public
+      - turnly.network.internal
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.redis-public.entrypoints=redis
+      - traefik.http.routers.redis-public.service=redis-public
+      - traefik.http.routers.redis-public.rule=Host(`${APP_INFRA_DOMAIN}`)
+      - traefik.http.services.redis-public.loadbalancer.server.port=8081
+
+      # Attach the OAuth-middleware to this service
+      - traefik.http.routers.redis-public.middlewares=oauth-admin-middleware

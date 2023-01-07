@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  platform-realtime-api:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: turnly/platform-realtime-api:latest
+    depends_on:
+      iam:
+        condition: service_healthy
+    networks:
+      - turnly.network.public
+      - turnly.network.internal
+    environment:
+      APP_NAME: platform-realtime-api
+      RABBITMQ_QUEUE: ${PLATFORM_REALTIME_API_RABBITMQ_QUEUE:-turnly.ms.platform_realtime_api.queue}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      # These tags are used to enable authenticated access to the service via OAuth-middleware.
+      - traefik.http.routers.platform-realtime-api.entrypoints=web,websecure
+      - traefik.http.routers.platform-realtime-api.rule=PathPrefix(`/api/rtm/platform`)
+      - traefik.http.routers.platform-realtime-api.service=platform-realtime-api
+      - traefik.http.services.platform-realtime-api.loadbalancer.server.port=${APP_PORT}
+
+      # Attach the OAuth-middleware to this service.
+      - traefik.http.routers.platform-realtime-api.middlewares=oauth-middleware

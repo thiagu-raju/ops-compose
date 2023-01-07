@@ -1,0 +1,22 @@
+version: '3.9'
+
+services:
+  custom-fields:
+    extends:
+      file: environment.yml
+      service: app-vars
+    image: turnly/custom-fields:latest
+    depends_on:
+      elasticsearch: # Disable this if you are using an external ElasticSearch database
+        condition: service_healthy
+      mongo: # Disable this if you are using an external Mongo database
+        condition: service_healthy
+    networks:
+      turnly.network.internal:
+        aliases:
+          - custom-fields.turnly.local
+    environment:
+      APP_NAME: custom-fields
+      ENCRYPTION_SECRET:
+      MONGO_DB: ${CUSTOM_FIELDS_MONGO_DB:-custom_fields_db}
+      RABBITMQ_QUEUE: ${CUSTOM_FIELDS_RABBITMQ_QUEUE:-turnly.ms.custom_fields.queue}
