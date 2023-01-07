@@ -15,7 +15,7 @@
   </p>
 </div>
 
-# Compose — Docker Compose Operator
+# Compose — Docker Operator
 
 Docker Compose Operator for for the provision of infrastructures for stage or production environments.
 
@@ -37,7 +37,7 @@ Clone these resources to your previously configured server with the basic requir
 > 💡 TIP: For convenience, clone these resources to /opt/ directory
 
 ```sh
-# Next, We add the name of the directory where the resources will be cloned, in this case "turnly".
+# Let's rename the directory where the resources will be cloned, in this case "turnly".
 git clone https://github.com/turnly/ops-compose turnly
 ```
 
@@ -80,7 +80,15 @@ __Generate secure secret keys, we recommend generating them with `openssl`.__
 | `OAUTH_ADMIN_SIGNING_KEY`          | Run `openssl rand -hex 16`   |
 | `OAUTH_ADMIN_ENCRYPTION_KEY`       | Run `openssl rand -hex 16`   |
 
-__Generate extremely strong usernames and passwords for your database instances and IAM, we recommend generating them with [1Password Generator.](https://1password.com/password-generator)__
+__Generate strong passwords for your database instances and IAM, we recommend generating them with [1Password Generator.](https://1password.com/password-generator)__
+
+| Password                 | Value           |
+| ------------------------ | :-------------: |
+| `IAM_ADMIN_PASSWORD`     | __PASSWORD__    |
+| `REDIS_PASSWORD`         | __PASSWORD__    |
+| `MONGO_PASSWORD`         | __PASSWORD__    |
+| `MINIO_ROOT_PASSWORD`    | __PASSWORD__    |
+| `POSTGRES_PASSWORD`      | __PASSWORD__    |
 
 ___
 
