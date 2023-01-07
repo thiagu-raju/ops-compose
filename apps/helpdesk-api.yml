@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: common-vars
-    image: turnly/helpdesk-api:latest
+    image: turnly/helpdesk-api:${APP_VERSION}
     depends_on:
       iam:
         condition: service_healthy

@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: oauth-vars
-    image: turnly/oauth:latest
+    image: turnly/oauth:${APP_VERSION}
     command: "./oauth --rule.public.action=allow --rule.public.rule=\"PathPrefix(`${PREFIX_UNAUTHENTICATED_ROUTES}`)\""
     depends_on:
       iam:
@@ -36,7 +36,7 @@ services:
     extends:
       file: environment.yml
       service: oauth-admin-vars
-    image: turnly/oauth:latest
+    image: turnly/oauth:${APP_VERSION}
     depends_on:
       iam:
         condition: service_healthy

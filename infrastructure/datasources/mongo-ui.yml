@@ -6,7 +6,7 @@ services:
     extends:
       file: environment.yml
       service: common-vars
-    image: mongo-express
+    image: mongo-express:latest
     networks:
       - turnly.network.public
       - turnly.network.internal

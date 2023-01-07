@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: common-vars
-    image: turnly/platform-realtime-api:latest
+    image: turnly/platform-realtime-api:${APP_VERSION}
     depends_on:
       iam:
         condition: service_healthy

@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: common-vars
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     command: --interval 30
     networks:
       - turnly.network.public
