@@ -82,13 +82,13 @@ __Generate secure secret keys, we recommend generating them with `openssl`.__
 
 __Generate strong passwords for your database instances and IAM, we recommend generating them with [1Password Generator.](https://1password.com/password-generator)__
 
-| Password                 | Value           |
-| ------------------------ | :-------------: |
-| `IAM_ADMIN_PASSWORD`     | __PASSWORD__    |
-| `REDIS_PASSWORD`         | __PASSWORD__    |
-| `MONGO_PASSWORD`         | __PASSWORD__    |
-| `MINIO_ROOT_PASSWORD`    | __PASSWORD__    |
-| `POSTGRES_PASSWORD`      | __PASSWORD__    |
+| Password                 | Value                |
+| ------------------------ | :------------------: |
+| `IAM_ADMIN_PASSWORD`     | __*** **** ***__     |
+| `REDIS_PASSWORD`         | __*** **** ***__     |
+| `MONGO_PASSWORD`         | __*** **** ***__     |
+| `MINIO_ROOT_PASSWORD`    | __*** **** ***__     |
+| `POSTGRES_PASSWORD`      | __*** **** ***__     |
 
 ___
 
