@@ -131,16 +131,6 @@ git fetch && git checkout $APP_VERSION
 APP_VERSION=v0.0.4 sh ./compose.sh upgrade
 ```
 
-Pulling a specific version of compose operator.
-
-```sh
-# Pulling $APP_VERSION version.
-git fetch && git checkout $APP_VERSION
-
-# Run upgrade command
-APP_VERSION=v0.0.4 sh ./compose.sh upgrade
-```
-
 ___
 
 ### Stop
