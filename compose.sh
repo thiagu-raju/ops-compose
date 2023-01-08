@@ -48,6 +48,7 @@ function upgrade() {
 
   for service in $services; do
     if [[ "${NO_RESTART_SERVICES[*]}" == *"$service"* ]] &>/dev/null; then
+      echo "🛑 Skipping $service service..."
       continue
     fi
 
