@@ -19,6 +19,8 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
+      - traefik.http.routers.oauth-public.tls.certresolver=certs
+
       - traefik.http.routers.oauth-public.entrypoints=web,websecure
       - traefik.http.routers.oauth-public.service=oauth-public
       - traefik.http.routers.oauth-public.rule=Host(`${IAM_HOSTNAME}`) && Path(`/_oauth`)
@@ -48,6 +50,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
+
+      - traefik.http.routers.oauth-admin-public.tls.certresolver=certs
 
       - traefik.http.routers.oauth-admin-public.entrypoints=web,websecure
       - traefik.http.routers.oauth-admin-public.service=oauth-admin-public

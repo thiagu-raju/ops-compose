@@ -21,6 +21,8 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
+      - traefik.http.routers.redis-public.tls.certresolver=certs
+
       - traefik.http.routers.redis-public.entrypoints=redis
       - traefik.http.routers.redis-public.service=redis-public
       - traefik.http.routers.redis-public.rule=Host(`${APP_INFRA_DOMAIN}`)

@@ -22,6 +22,8 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
+      - traefik.http.routers.storage-public.tls.certresolver=certs
+
       - traefik.http.routers.storage-public.entrypoints=storage
       - traefik.http.routers.storage-public.service=storage-public
       - traefik.http.routers.storage-public.rule=Host(`${APP_INFRA_DOMAIN}`)

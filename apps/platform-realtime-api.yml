@@ -19,6 +19,8 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
+      - traefik.http.routers.platform-realtime-api.tls.certresolver=certs
+
       # These tags are used to enable authenticated access to the service via OAuth-middleware.
       - traefik.http.routers.platform-realtime-api.entrypoints=web,websecure
       - traefik.http.routers.platform-realtime-api.rule=PathPrefix(`/api/rtm/platform`)

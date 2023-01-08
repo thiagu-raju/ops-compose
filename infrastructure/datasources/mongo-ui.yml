@@ -18,6 +18,8 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
+      - traefik.http.routers.mongo-public.tls.certresolver=certs
+
       - traefik.http.routers.mongo-public.entrypoints=mongo
       - traefik.http.routers.mongo-public.service=mongo-public
       - traefik.http.routers.mongo-public.rule=Host(`${APP_INFRA_DOMAIN}`)
