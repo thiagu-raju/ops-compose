@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  healthy-watcher:
+    extends:
+      file: environment.yml
+      service: common-vars
+    image: ghcr.io/rafhaanshah/container-mon:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      CONTAINERMON_NOTIFY_HEALTHY: true
+      CONTAINERMON_CHECK_STOPPED: true
+      CONTAINERMON_NOTIFICATION_URL: ${HEALTHY_WATCHER_NOTIFICATION_URL}
