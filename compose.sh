@@ -25,15 +25,28 @@ function upgrade() {
   NO_RESTART_SERVICES=$infrastructure
   NO_RESTART_SERVICES+=("gateway.yml")
 
-  echo "🔔 Warning: If the environment variables have changed, you may need update the .env file before running this command."
+  APP_VERSION=$(grep "APP_VERSION=" .env | awk -F '=' '{print $2}' | xargs)
+  LATEST_VERSION=$(cat VERSION)
 
-  if [[ -n $APP_VERSION ]]; then
-    # Set the app version to .env file
-    sed -i "s/APP_VERSION=.*/APP_VERSION=$APP_VERSION/g" .env
+  if [[ $APP_VERSION != "$LATEST_VERSION" ]]; then
+    echo "🔔 Warning: If the environment variables have changed, you may need update the .env file before running this command."
+    echo "🔔 Info: The APP_VERSION in the .env file is not the same as the $LATEST_VERSION version. We'll update it for you."
+
+    sed -i "s/APP_VERSION=.*/APP_VERSION=$LATEST_VERSION/g" .env
+    APP_VERSION=$LATEST_VERSION
+  else
+    if [[ -z $FORCE ]]; then
+      echo "🔔 Info: The current version is the same as the latest version. Skipping the upgrade..."
+      echo "🔔 Info: If you want to force the upgrade, run this command with the --force flag."
+
+      exit 0
+    fi
   fi
 
-  if [[ $UPGRADE_ALL == true ]]; then
+  if [[ -n $UPGRADE_ALL ]]; then
     echo "🔔 Warning: You are about to upgrade all Turnly services. This may take a while and cause downtime."
+    echo "🔔 Warning: When using the --upgrade-all flag, be sure to check the changelog for any breaking changes and schedule a maintenance notice for your users."
+    echo ""
     echo "📡 Upgrading all apps and infrastructure services..."
 
     NO_RESTART_SERVICES=("gateway.yml")
@@ -41,14 +54,13 @@ function upgrade() {
     echo "🔔 Warning: The infrastructure services are not restarted by default. If you want to upgrade them, run this command with the --upgrade-all flag."
   fi
 
-  echo "🚀 Restarting services with zero-downtime deployment strategy..."
+  echo "🚀 Restarting services with zero-downtime deployment strategy, with $APP_VERSION version..."
 
-  echo "🏁 Getting docker compose service names..."
   services=$(eval "$compose" config --services)
 
   for service in $services; do
     if [[ "${NO_RESTART_SERVICES[*]}" == *"$service"* ]] &>/dev/null; then
-      echo "🛑 Skipping $service service..."
+      echo "🔔 Info: Skipping $service service..."
       continue
     fi
 
@@ -82,6 +94,10 @@ function upgrade() {
     echo "✅ The $service service has been upgraded successfully!"
   done
 
+  # Run cleanup for old images
+  echo "🗑 Cleaning up old images..."
+  docker image prune -f
+
   echo "✅ ✅ All services upgraded successfully!"
 }
 
@@ -89,6 +105,7 @@ COMMAND=$1
 shift
 
 [[ $* == *"--upgrade-all"* ]] && UPGRADE_ALL=true
+[[ $* == *"--force"* ]] && FORCE=true
 
 case $COMMAND in
 start | up)

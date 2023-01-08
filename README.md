@@ -124,11 +124,11 @@ sh ./compose.sh upgrade
 Pulling a specific version of compose operator.
 
 ```sh
-# Pulling $APP_VERSION version.
-git fetch && git checkout $APP_VERSION
+# Pulling version.
+git fetch --all --prune --quiet && git checkout $APP_VERSION
 
 # Run upgrade command
-APP_VERSION=v0.0.4 sh ./compose.sh upgrade
+sh ./compose.sh upgrade
 ```
 
 ___
