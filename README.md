@@ -105,6 +105,44 @@ on your browser to access the IAM dashboard.
 
 ___
 
+### Upgrading or switching version
+
+You can upgrade your Turnly instances by using the following command:
+
+> 💡 TIP: The infrastructure services are not restarted by default.
+> If you want to upgrade them, run this command with the `--upgrade-all` flag.
+
+```sh
+# Pulling latest version of compose operator.
+# WARNING: Make sure you don't have changes to your files to avoid merge conflicts.
+git pull origin main
+
+# Run upgrade command
+sh ./compose.sh upgrade
+```
+
+Pulling a specific version of compose operator.
+
+```sh
+# Pulling $APP_VERSION version.
+git fetch && git checkout $APP_VERSION
+
+# Run upgrade command
+APP_VERSION=v0.0.4 sh ./compose.sh upgrade
+```
+
+Pulling a specific version of compose operator.
+
+```sh
+# Pulling $APP_VERSION version.
+git fetch && git checkout $APP_VERSION
+
+# Run upgrade command
+APP_VERSION=v0.0.4 sh ./compose.sh upgrade
+```
+
+___
+
 ### Stop
 
 You can stop your Turnly instances by using the following command:
