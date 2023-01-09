@@ -107,6 +107,11 @@ ___
 
 ### Upgrading or switching version
 
+To make updates to our services, we implement a basic strategy that allows us to do it
+with **zero-downtime** whenever possible. Thanks to our **gateway**, we can scale the services
+and load a new container with the new image while the **load balancer** sends requests
+to both services for x time until we finally remove the old service leaving the new container.
+
 You can upgrade your Turnly instances by using the following command:
 
 > 💡 TIP: The infrastructure services are not restarted by default.
@@ -129,6 +134,19 @@ git fetch --all --prune --quiet && git checkout $APP_VERSION
 
 # Run upgrade command
 sh ./compose.sh upgrade
+```
+
+Forcing upgrade
+
+> 💡 TIP: If your current version is the same as the latest version and you still
+> want to force a reboot with the zero-downtime strategy, you can use the `--force` flag to proceed.
+
+```sh
+# Run upgrade command
+sh ./compose.sh upgrade --force
+
+# Run upgrade and include the infra services
+sh ./compose.sh upgrade --upgrade-all --force
 ```
 
 ___
