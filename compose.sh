@@ -26,7 +26,7 @@ function upgrade() {
   NO_RESTART_SERVICES+=("gateway.yml")
 
   APP_VERSION=$(grep "APP_VERSION=" .env | awk -F '=' '{print $2}' | xargs)
-  LATEST_VERSION=$(cat VERSION)
+  LATEST_VERSION=$(cat ./config/VERSION)
 
   if [[ $APP_VERSION != "$LATEST_VERSION" ]]; then
     echo "🔔 Warning: If the environment variables have changed, you may need update the .env file before running this command."

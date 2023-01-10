@@ -6,6 +6,8 @@ services:
       file: environment.yml
       service: common-vars
     image: turnly/fluentd:latest
+    volumes:
+      - ./config/fluent.conf:/fluentd/etc/fluent.conf:ro
     depends_on:
       elasticsearch: # Disable this if you are using an external ElasticSearch database
         condition: service_healthy
