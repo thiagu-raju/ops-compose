@@ -32,7 +32,7 @@ function upgrade() {
     echo "🔔 Warning: If the environment variables have changed, you may need update the .env file before running this command."
     echo "🔔 Info: The APP_VERSION in the .env file is not the same as the $LATEST_VERSION version. We'll update it for you."
 
-    sed -i "s/APP_VERSION=.*/APP_VERSION=$LATEST_VERSION/g" .env
+    sed -i.bak -e "s#APP_VERSION=.*#APP_VERSION=$LATEST_VERSION#g" .env
     APP_VERSION=$LATEST_VERSION
   else
     if [[ -z $FORCE ]]; then
