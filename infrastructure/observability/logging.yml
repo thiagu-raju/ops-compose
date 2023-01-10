@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: common-vars
-    image: turnly/fluentd:latest
+    image: ghcr.io/turnly/fluentd:latest
     volumes:
       - ./config/fluent.conf:/fluentd/etc/fluent.conf:ro
     depends_on:

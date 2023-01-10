@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: app-vars
-    image: turnly/business-owners:${APP_VERSION}
+    image: ghcr.io/turnly/business-owners:${APP_VERSION}
     depends_on:
       elasticsearch: # Disable this if you are using an external ElasticSearch database
         condition: service_healthy

@@ -5,7 +5,7 @@ services:
     extends:
       file: environment.yml
       service: iam-vars
-    image: turnly/iam:${APP_VERSION}
+    image: ghcr.io/turnly/iam:${APP_VERSION}
     command: start --import-realm --optimized --https-port=443 --https-certificate-file=/etc/x509/https/tls.crt --https-certificate-key-file=/etc/x509/https/tls.key
     volumes:
       - ./certs/domains/${IAM_HOSTNAME}.crt:/etc/x509/https/tls.crt:ro
