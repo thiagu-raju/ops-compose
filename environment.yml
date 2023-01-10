@@ -99,3 +99,12 @@ services:
       # Credentials for admin account
       KEYCLOAK_ADMIN: ${IAM_ADMIN_USERNAME}
       KEYCLOAK_ADMIN_PASSWORD: ${IAM_ADMIN_PASSWORD}
+
+      # General settings
+      PROXY_ADDRESS_FORWARDING: true
+      KC_HOSTNAME_STRICT_HTTPS: true
+      KC_TRANSACTION_XA_ENABLED: true
+      KC_HTTP_ENABLED: false
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_PROXY: edge
