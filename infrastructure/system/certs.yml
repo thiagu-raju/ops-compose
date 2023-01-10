@@ -9,7 +9,8 @@ services:
       - ./certs/data:/certs/data:ro
       - ./certs/domains:/certs/domains
     depends_on:
-      - gateway
+      gateway:
+        condition: service_healthy
     networks:
       - turnly.network.internal
     deploy:

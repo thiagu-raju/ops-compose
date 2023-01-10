@@ -7,6 +7,7 @@ services:
       service: common-vars
     image: turnly/gateway:latest
     command:
+      - --ping
       - --providers.docker
       - --providers.docker.exposedbydefault=false
       - --providers.docker.network=turnly.network.internal
@@ -56,6 +57,11 @@ services:
       - ${REDIS_UI_PORT}:${REDIS_UI_PORT}
       - ${MINIO_UI_PORT}:${MINIO_UI_PORT}
       - ${TRACING_UI_PORT}:${TRACING_UI_PORT}
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       turnly.network.public:
       turnly.network.internal:
