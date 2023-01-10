@@ -6,8 +6,16 @@ services:
       file: environment.yml
       service: iam-vars
     image: turnly/iam:${APP_VERSION}
-    command: start --import-realm --optimized
+    command: start --import-realm --optimized --https-port=443 --https-certificate-file=/etc/x509/https/tls.crt --https-certificate-key-file=/etc/x509/https/tls.key
+    volumes:
+      - ./certs/domains/${IAM_HOSTNAME}.crt:/etc/x509/https/tls.crt:ro
+      - ./certs/domains/${IAM_HOSTNAME}.key:/etc/x509/https/tls.key:ro
+
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
+      gateway:
+        condition: service_started
       postgres: # Disable this if you are using an external Postgres database
         condition: service_healthy
     networks:
@@ -31,4 +39,4 @@ services:
       - traefik.http.routers.iam-public.service=iam-public
       - traefik.http.services.iam-public.loadbalancer.server.port=8080
       - traefik.http.routers.iam-public.rule=Host(`${IAM_HOSTNAME}`) && PathPrefix(`/admin`, `/js`, `/realms`, `/resources`, `/robots.txt`)
-      - traefik.http.routers.iam-public.middlewares=error-pages-middleware
+      - traefik.http.routers.iam-public.middlewares=server-error-middleware

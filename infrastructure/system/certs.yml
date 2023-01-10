@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  certs:
+    image: stedolan/jq
+    entrypoint: ["/bin/bash", "/extract-certs.sh"]
+    volumes:
+      - ./certs/extract-certs.sh:/extract-certs.sh
+      - ./certs/data:/certs/data:ro
+      - ./certs/domains:/certs/domains
+    depends_on:
+      - gateway
+    networks:
+      - turnly.network.internal
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role==manager]
+      restart_policy:
+        # delay: 2160h (90 days) Same as certificates duration.
+        delay: 24h # Re-run every 24 hours.
+      resources:
+        limits: {
+          cpus: '0.1',
+          memory: '32M'
+        }
+        reservations: {
+          cpus: '0.025',
+          memory: '16M'
+        }

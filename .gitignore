@@ -5,4 +5,5 @@
 !.env.example
 
 # Certs
-letsencrypt/
+certs/**/*
+!certs/extract-certs.sh
