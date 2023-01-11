@@ -17,7 +17,7 @@
 
 # Compose — Docker Operator
 
-Docker Compose Operator for for the provision of infrastructures for stage or production environments.
+Docker Compose Operator for the provision of infrastructures for stage or production environments.
 
 ### System Requirements
 
