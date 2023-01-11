@@ -27,7 +27,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
-      - traefik.http.routers.rabbitmq-public.tls.certresolver=certs
+      - traefik.http.routers.rabbitmq-public.tls=true
 
       - traefik.http.routers.rabbitmq-public.entrypoints=rabbitmq
       - traefik.http.routers.rabbitmq-public.service=rabbitmq-public

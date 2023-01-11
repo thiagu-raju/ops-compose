@@ -22,7 +22,7 @@ services:
 
       # Enable TLS Certificates
       - --certificatesresolvers.certs.acme.dnschallenge=true
-      - --certificatesresolvers.certs.acme.dnschallenge.delaybeforecheck=0
+      - --certificatesresolvers.certs.acme.dnschallenge.delaybeforecheck=90 # To delay DNS check and reduce LE hit rate
       - --certificatesresolvers.certs.acme.dnschallenge.provider=${TLS_DNS_PROVIDER}
 
       - --certificatesresolvers.certs.acme.tlschallenge=true

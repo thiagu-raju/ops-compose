@@ -17,7 +17,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
-      - traefik.http.routers.widgets-api-public.tls.certresolver=certs
+      - traefik.http.routers.widgets-api-public.tls=true
 
       - traefik.http.routers.widgets-api-public.entrypoints=web,websecure
       - traefik.http.routers.widgets-api-public.rule=PathPrefix(`/api/widgets`)

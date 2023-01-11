@@ -32,7 +32,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
-      - traefik.http.routers.iam-public.tls.certresolver=certs
+      - traefik.http.routers.iam-public.tls=true
 
       - traefik.http.routers.iam-public.entrypoints=web,websecure
       - traefik.http.routers.iam-public.service=iam-public

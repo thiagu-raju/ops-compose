@@ -19,7 +19,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
-      - traefik.http.routers.kibana-public.tls.certresolver=certs
+      - traefik.http.routers.kibana-public.tls=true
 
       - traefik.http.routers.kibana-public.entrypoints=kibana
       - traefik.http.routers.kibana-public.service=kibana-public

@@ -23,7 +23,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
-      - traefik.http.routers.widgets-realtime-api.tls.certresolver=certs
+      - traefik.http.routers.widgets-realtime-api.tls=true
 
       - traefik.http.routers.widgets-realtime-api.entrypoints=web,websecure
       - traefik.http.routers.widgets-realtime-api.rule=PathPrefix(`/api/rtm/widgets`)

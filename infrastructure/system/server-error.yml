@@ -9,7 +9,7 @@ services:
       - traefik.enable=true
       - traefik.docker.network=turnly.network.internal
 
-      - traefik.http.routers.server-error.tls.certresolver=certs
+      - traefik.http.routers.server-error.tls=true
 
       # use as "fallback" for any NON-registered services (with priority below normal)
       - traefik.http.routers.server-error.rule=HostRegexp(`{host:.+}`)
