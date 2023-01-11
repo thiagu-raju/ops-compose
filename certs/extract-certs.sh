@@ -9,6 +9,10 @@ if [ ! -f "$ACME" ]; then
   exit 1
 fi
 
+if [ ! -d "vault" ]; then
+  mkdir vault
+fi
+
 echo "🚀 Extracting certificates from acme.json..."
 
 EXTRACT=$1
@@ -23,10 +27,14 @@ for DOMAIN in $DOMAINS; do
   echo "📦 Getting $DOMAIN certificate..."
 
   echo "📄 Extracting certificate..."
-  jq -r ".certs.Certificates[] | select(.domain.main==\"""$DOMAIN""\") | .certificate" $ACME | base64 --decode > /vault/tls.crt
+  {
+    jq -r ".certs.Certificates[] | select(.domain.main==\"""$DOMAIN""\") | .certificate" $ACME | base64 --decode
+  } >vault/tls.crt
 
   echo "🔑 Extracting private key..."
-  jq -r ".certs.Certificates[] | select(.domain.main==\"""$DOMAIN""\") | .key" $ACME | base64 --decode > /vault/tls.key
+  {
+    jq -r ".certs.Certificates[] | select(.domain.main==\"""$DOMAIN""\") | .key" $ACME | base64 --decode
+  } >vault/tls.key
 
   echo "✅ $DOMAIN certificate extracted"
 done
