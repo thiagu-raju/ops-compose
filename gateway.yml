@@ -16,7 +16,7 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
 
-      # Global HTTP to HTTPS redirect
+      # Global redirect to https
       - --entrypoints.web.http.redirections.entrypoint.to=websecure
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
 
@@ -24,15 +24,8 @@ services:
       - --certificatesresolvers.certs.acme.dnschallenge=true
       - --certificatesresolvers.certs.acme.dnschallenge.delaybeforecheck=90 # To delay DNS check and reduce LE hit rate
       - --certificatesresolvers.certs.acme.dnschallenge.provider=${TLS_DNS_PROVIDER}
-
-      - --certificatesresolvers.certs.acme.tlschallenge=true
       - --certificatesresolvers.certs.acme.email=${TLS_ISSUED_TO_EMAIL}
       - --certificatesresolvers.certs.acme.storage=/certs/data/acme.json
-
-      # Configure websecure
-      - --entrypoints.websecure.http.tls.certResolver=certs
-      - --entrypoints.websecure.http.tls.domains[0].main=${APP_DOMAIN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${APP_DOMAIN}
 
       # Optional - Expose monitoring and resource management services.
       # WARNING: If you enable these ports, you must take your own security measures.
@@ -43,11 +36,18 @@ services:
       - --entrypoints.redis.address=:${REDIS_UI_PORT}
       - --entrypoints.storage.address=:${MINIO_UI_PORT}
       - --entrypoints.tracing.address=:${TRACING_UI_PORT}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=turnly.network.internal
+
+      # Global wildcard certificates
+      - traefik.http.routers.wildcard-certs.tls.certResolver=certs
+      - traefik.http.routers.wildcard-certs.tls.domains[0].main=${APP_DOMAIN}
+      - traefik.http.routers.wildcard-certs.tls.domains[0].sans=*.${APP_DOMAIN}
     environment:
       # NOTE: You must provide the required variables based on your DNS provider's configuration.
       # NOTE: See https://doc.traefik.io/traefik/https/acme
       DO_AUTH_TOKEN: ${DO_AUTH_TOKEN}
-
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./certs/data:/certs/data
