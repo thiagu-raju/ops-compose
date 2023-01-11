@@ -21,14 +21,18 @@ services:
       - --entrypoints.web.http.redirections.entrypoint.scheme=https
 
       # Enable TLS Certificates
-      - --certificatesresolvers.certs.acme.tlschallenge=true
-      - --certificatesresolvers.certs.acme.email=${CERTS_EMAIL}
-      - --certificatesresolvers.certs.acme.storage=/certs/data/acme.json
-      # The certificates' duration in hours. 
-      - --certificatesresolvers.certs.acme.certificatesDuration=2160 # (90 days)
+      - --certificatesresolvers.certs.acme.dnschallenge=true
+      - --certificatesresolvers.certs.acme.dnschallenge.delaybeforecheck=0
+      - --certificatesresolvers.certs.acme.dnschallenge.provider=${TLS_DNS_PROVIDER}
 
-      # Configure cert resolver for websecure
+      - --certificatesresolvers.certs.acme.tlschallenge=true
+      - --certificatesresolvers.certs.acme.email=${TLS_ISSUED_TO_EMAIL}
+      - --certificatesresolvers.certs.acme.storage=/certs/data/acme.json
+
+      # Configure websecure
       - --entrypoints.websecure.http.tls.certResolver=certs
+      - --entrypoints.websecure.http.tls.domains[0].main=${APP_DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${APP_DOMAIN}
 
       # Optional - Expose monitoring and resource management services.
       # WARNING: If you enable these ports, you must take your own security measures.
@@ -39,6 +43,11 @@ services:
       - --entrypoints.redis.address=:${REDIS_UI_PORT}
       - --entrypoints.storage.address=:${MINIO_UI_PORT}
       - --entrypoints.tracing.address=:${TRACING_UI_PORT}
+    environment:
+      # NOTE: You must provide the required variables based on your DNS provider's configuration.
+      # NOTE: See https://doc.traefik.io/traefik/https/acme
+      DO_AUTH_TOKEN: ${DO_AUTH_TOKEN}
+
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./certs/data:/certs/data
