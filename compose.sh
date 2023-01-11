@@ -4,7 +4,7 @@ set -e
 
 echo "🚀 Starting Turnly Compose-backed infrastructure provisioning..."
 
-compose="docker compose --project-name turnly -f gateway.yml"
+compose="docker compose -f gateway.yml"
 
 apps=$(find ./apps -name "*.yml" -type f)
 infrastructure=$(find ./infrastructure -name "*.yml" -type f)
