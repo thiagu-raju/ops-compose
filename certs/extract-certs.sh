@@ -12,7 +12,7 @@ fi
 
 echo "🚀 Extracting certificates from acme.json..."
 
-DOMAINS=$(jq -r '.certs.Certificates[].domain.main' $ACME | sort | uniq)
+DOMAINS=$(jq -r ".certs.Certificates[].domain.main" $ACME | sort | uniq)
 
 for DOMAIN in $DOMAINS; do
   echo "📦 Getting $DOMAIN certificate..."
@@ -22,10 +22,10 @@ for DOMAIN in $DOMAINS; do
   OUTPUT=$DOMAINS_DIR/$DOMAIN
 
   echo "📄 Extracting certificate..."
-  jq -r '.certs.Certificates[] | select(.domain.main==\"'"$DOMAIN"'\") | .certificate' $ACME | base64 --decode >"$OUTPUT/cert.pem"
+  jq -r ".certs.Certificates[] | select(.domain.main==\"""$DOMAIN""\") | .certificate" $ACME | base64 --decode >"$OUTPUT/cert.pem"
 
   echo "🔑 Extracting private key..."
-  jq -r '.certs.Certificates[] | select(.domain.main==\"'"$DOMAIN"'\") | .key' $ACME | base64 --decode >"$OUTPUT/key.pem"
+  jq -r ".certs.Certificates[] | select(.domain.main==\"""$DOMAIN""\") | .key" $ACME | base64 --decode >"$OUTPUT/key.pem"
 
   echo "✅ $DOMAIN certificate extracted"
 done
