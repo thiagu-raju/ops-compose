@@ -3,11 +3,11 @@ version: "3.9"
 services:
   certs:
     image: stedolan/jq
-    entrypoint: ["/bin/bash", "/extract-certs.sh"]
+    entrypoint: ["/bin/bash", "/extract-certs.sh", "${IAM_HOSTNAME}"]
     volumes:
       - ./certs/extract-certs.sh:/extract-certs.sh
-      - ./certs/data:/certs/data:ro
-      - ./certs/domains:/certs/domains
+      - ./certs/data:/data:ro
+      - ./certs/extracted:/vault
     depends_on:
       gateway:
         condition: service_healthy
