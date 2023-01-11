@@ -6,7 +6,7 @@ services:
       file: environment.yml
       service: iam-vars
     image: ghcr.io/turnly/iam:${APP_VERSION}
-    command: start --import-realm --optimized --https-port=443 --https-certificate-file=/etc/x509/https/${IAM_HOSTNAME}.crt --https-certificate-key-file=/etc/x509/https/${IAM_HOSTNAME}.key
+    command: start --import-realm --optimized --https-port=443 --https-certificate-file=/etc/x509/https/${APP_DOMAIN}.crt --https-certificate-key-file=/etc/x509/https/${APP_DOMAIN}.key
     volumes:
       - ./certs/domains:/etc/x509/https:ro
 
