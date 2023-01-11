@@ -9,7 +9,6 @@ services:
     command: start --import-realm --optimized --verbose --https-port=443 --https-certificate-file=/etc/x509/https/${IAM_HOSTNAME}.crt --https-certificate-key-file=/etc/x509/https/${IAM_HOSTNAME}.key
     volumes:
       - ./certs/domains:/etc/x509/https:ro
-      - ./certs/domains:/etc/x509/https:ro
 
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
