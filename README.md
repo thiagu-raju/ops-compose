@@ -54,7 +54,7 @@ cp .env.example .env
 ```
 #### Secret keys
 
-Generate secure secret keys, we recommend generating them with `openssl`.__
+Generate secure secret keys, we recommend generating them with `openssl`.
 
 | Secret                             | Value                        |
 | ---------------------------------- | ---------------------------- |
@@ -68,7 +68,7 @@ Generate secure secret keys, we recommend generating them with `openssl`.__
 #### Passwords
 
 Generate strong passwords for your database instances and IAM,
-we recommend generating them with [1Password Generator.](https://1password.com/password-generator)__
+we recommend generating them with [1Password Generator.](https://1password.com/password-generator)
 
 | Password                 | Value                |
 | ------------------------ | :------------------: |

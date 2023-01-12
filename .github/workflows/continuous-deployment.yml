@@ -3,6 +3,10 @@ name: 🚀 CD - Continuous Deployment
 on:
   workflow_dispatch:
   push:
+    paths:
+      - '**'
+      - '!.github/workflows/continuous-deployment.yml'
+      - '!README.md'
     branches:
       - main
 
