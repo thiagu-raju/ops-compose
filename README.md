@@ -24,7 +24,7 @@ Docker Compose Operator for the provision of infrastructures for stage or produc
 To properly set up the environment, ensure you meet the following requirements on your server:
 
 - [Docker CE >=20.10.21](https://docs.docker.com/engine/release-notes)
-- [Docker Compose >=2.12.0](https://docs.docker.com/compose/release-notes)
+- [Docker Compose >=2.15.1](https://docs.docker.com/compose/release-notes)
 
 > In the future we would like to add some details about best practices and security of your application,
 > however for now we recommend reading some articles on how to improve the security of your servers,
