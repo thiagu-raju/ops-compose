@@ -42,7 +42,7 @@ ___
 
 ### Environment Variables
 
-Environment variables will allow you to customize Turnly's configurations.
+Environment variables will allow you to customize Turnly's configurations. \
 You must change the environment variables before running Turnly using the Docker Compose.
 
 ```sh
@@ -67,8 +67,8 @@ Generate secure secret keys, we recommend generating them with `openssl`.
 
 #### Passwords
 
-Generate strong passwords for your database instances and IAM,
-we recommend generating them with [1Password Generator.](https://1password.com/password-generator)
+Generate strong passwords for your database instances and IAM, we recommend generating \
+them with [1Password Generator.](https://1password.com/password-generator)
 
 | Password                 | Value                |
 | ------------------------ | :------------------: |
@@ -102,7 +102,7 @@ ___
 
 ### Deploy, Get the services up and running.
 
-After successfully setting your environment variables, you can get the Turnly using the following Docker command:
+After successfully setting your environment variables, you can get the Turnly using the following command:
 
 ```sh
 bash compose.sh start
@@ -112,7 +112,7 @@ ___
 
 ### Stop running containers.
 
-You can stop and remove containers created for Turnly services using the `stop` command.
+You can stop and remove containers created for Turnly services using the `stop` command. \
 The only things removed are containers for Turnly services.
 
 ```sh
@@ -125,7 +125,8 @@ ___
 
 Delete all containers, **data** and infrastructure from your server.
 
-Use this command with **caution** and do not add it to automated pipelines, preferably run it manually within your server.
+> Use this command with **caution** and do not add it to automated pipelines,
+> preferably run it manually within your server.
 
 ```sh
 bash compose.sh prune
