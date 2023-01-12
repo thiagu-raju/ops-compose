@@ -2,11 +2,11 @@ version: '3.9'
 
 # Delete redis-ui.yml (this) file if you are using an external Redis database
 services:
-  redis_ui:
+  redis-ui:
     extends:
       file: environment.yml
       service: common-vars
-    hostname: redis_ui
+    hostname: redis-ui
     image: ghcr.io/joeferner/redis-commander:latest
     networks:
       - turnly.network.public

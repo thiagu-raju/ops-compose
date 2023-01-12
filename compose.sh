@@ -104,31 +104,52 @@ function upgrade() {
   echo "✅ ✅ All services upgraded successfully!"
 }
 
+function uninstall() {
+  echo -n "🔴 Prune action is irreversible. Are you sure you want to continue? [y/N]"
+  read -r answer
+
+  if [[ $answer != "y" && $answer != "yes" ]]; then
+    echo "🟢 Ahoy! You've decided to cancel the prune action. Exiting..."
+    exit 0
+  fi
+
+  echo "🔴 Running irreversible prune action, please wait..."
+  eval "$compose down -v"
+
+  if [[ -n $CLEANUP_IMAGES ]]; then
+    echo "🗑 Removing all unused images..."
+    docker image prune -f
+  fi
+
+  echo "✅ ✅ All services pruned successfully!"
+}
+
 COMMAND=$1
 shift
 
 [[ $* == *"--upgrade-all"* ]] && UPGRADE_ALL=true
 [[ $* == *"--force"* ]] && FORCE=true
+[[ $* == *"--images"* ]] && CLEANUP_IMAGES=true
 
 case $COMMAND in
-start | up)
-  echo "🚀 Starting Turnly services in the background..."
+start)
+  echo "🟢 Starting Turnly services..."
   eval "$compose up -d --renew-anon-volumes $*"
   ;;
-down)
-  echo "🛑 Stopping Turnly services and removing volumes..."
-  eval "$compose down -v $*"
-  ;;
 stop)
-  echo "🛑 Stopping Turnly services..."
-  eval "$compose stop $*"
+  echo "🟠 Stopping Turnly services..."
+  eval "$compose down"
+  ;;
+prune)
+  echo "🔴 Pruning Turnly services..."
+  uninstall
   ;;
 upgrade)
-  echo "📦 Upgrading Turnly services..."
+  echo "🔵 Upgrading Turnly services..."
   upgrade
   ;;
 *)
-  echo "Oops! 🤯 Something went wrong. Please try again."
+  echo "⚪ Something went wrong. Please try again."
   exit 1
   ;;
 esac

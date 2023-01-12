@@ -2,7 +2,7 @@ version: '3.9'
 
 # Delete mongo-ui.yml (this) file if you are using an external Mongo database
 services:
-  mongo_ui:
+  mongo-ui:
     extends:
       file: environment.yml
       service: common-vars
