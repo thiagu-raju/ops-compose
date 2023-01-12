@@ -14,4 +14,4 @@ jobs:
         run: cd /opt/turnly && git pull origin main
 
       - name: 📡 Upgrading Apps services...
-        run: cd /opt/turnly && bash ./compose.sh upgrade
+        run: cd /opt/turnly && bash ./compose.sh upgrade --force
