@@ -64,7 +64,7 @@ function upgrade() {
       continue
     fi
 
-    echo "🚀 Bring a new container up with the new image..."
+    echo "🚀 Bring a new container up with the new image for the $service service..."
     eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service"
 
     old_container_id=$(docker ps -f name="$service" -q | tail -n1)
@@ -79,15 +79,15 @@ function upgrade() {
         wait_period=$((wait_period + 10))
 
         if [ $wait_period -gt $reached_timeout ]; then
-          echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container..."
+          echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container for the $service service..."
           break
         else
-          echo "🕐 Waiting $reached_timeout seconds for the new container to be ready, then we'll bring down the old one..."
+          echo "🕐 Waiting $reached_timeout seconds for the new container for the $service service to be ready, then we'll bring down the old one..."
           sleep 10
         fi
       done
 
-      echo "🗑 Bringing down old container..."
+      echo "🗑 Bringing down old container for the $service service..."
       docker stop "$old_container_id"
       docker rm "$old_container_id"
     fi
