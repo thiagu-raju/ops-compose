@@ -121,22 +121,6 @@ bash compose.sh stop
 
 ___
 
-### Pruning (Dangerous)
-
-Delete all containers, **data** and infrastructure from your server.
-
-> Use this command with **caution** and do not add it to automated pipelines,
-> preferably run it manually within your server.
-
-```sh
-bash compose.sh prune
-
-# Add --images flag to cleanup all images
-bash compose.sh prune --images
-```
-
-___
-
 ### Upgrading version
 
 To make updates to our services, we implement a basic strategy that allows us to do it
@@ -178,6 +162,22 @@ bash compose.sh upgrade --force
 
 # Run upgrade and include the infra services
 bash compose.sh upgrade --upgrade-all --force
+```
+
+___
+
+### Pruning (Dangerous)
+
+Delete all containers, **data** and infrastructure from your server.
+
+> Use this command with **caution** and do not add it to automated pipelines,
+> preferably run it manually within your server.
+
+```sh
+bash compose.sh prune
+
+# Add --images flag to cleanup all images
+bash compose.sh prune --images
 ```
 
 ___
