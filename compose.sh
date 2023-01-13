@@ -73,6 +73,16 @@ function upgrade() {
       reached_timeout=12
       wait_period=0
 
+      SLOWLY_STARTING_SERVICES=(
+        "widgets-api"
+        "helpdesk-api"
+        "widgets-realtime-api"
+      )
+
+      if [[ "${SLOWLY_STARTING_SERVICES[*]}" == *"$service"* ]] &>/dev/null; then
+        reached_timeout=32
+      fi
+
       while true; do
         wait_period=$((wait_period + 4))
 
