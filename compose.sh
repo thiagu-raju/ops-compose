@@ -70,20 +70,18 @@ function upgrade() {
     old_container_id=$(docker ps -f name="$service" -q | tail -n1)
 
     if [[ -n $old_container_id ]]; then
-      reached_timeout=120
+      reached_timeout=12
       wait_period=0
 
-      [[ $service == "iam" ]] && reached_timeout=240
-
       while true; do
-        wait_period=$((wait_period + 10))
+        wait_period=$((wait_period + 4))
 
         if [ $wait_period -gt $reached_timeout ]; then
           echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container for the $service service..."
           break
         else
           echo "🕐 Waiting $reached_timeout seconds for the new container for the $service service to be ready, then we'll bring down the old one..."
-          sleep 10
+          sleep 4
         fi
       done
 
