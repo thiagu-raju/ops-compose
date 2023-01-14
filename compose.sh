@@ -30,14 +30,14 @@ function upgrade() {
 
   if [[ $APP_VERSION != "$LATEST_VERSION" ]]; then
     echo "🔔 Warning: If the environment variables have changed, you may need update the .env file before running this command."
-    echo "🔔 Info: The APP_VERSION in the .env file is not the same as the $LATEST_VERSION version. We'll update it for you."
+    echo "🔔 The APP_VERSION in the .env file is not the same as the $LATEST_VERSION version. We'll update it for you."
 
     sed -i.bak -e "s#APP_VERSION=.*#APP_VERSION=$LATEST_VERSION#g" .env
     APP_VERSION=$LATEST_VERSION
   else
     if [[ -z $FORCE ]]; then
-      echo "🔔 Info: The current version is the same as the latest version. Skipping the upgrade..."
-      echo "🔔 Info: If you want to force the upgrade, run this command with the --force flag."
+      echo "🔔 The current version is the same as the latest version. Skipping the upgrade..."
+      echo "🔔 If you want to force the upgrade, run this command with the --force flag."
 
       exit 0
     fi
@@ -63,12 +63,12 @@ function upgrade() {
 
   for service in $services; do
     if [[ "${NO_RESTART_SERVICES[*]}" == *"$service"* ]] &>/dev/null; then
-      echo "🔔 Info: Skipping $service service..."
+      echo "🔔 Skipping $service service..."
       continue
     fi
 
     echo "🚀 Bring a new container up with the new image for the $service service..."
-    eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service"
+    eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service --remove-orphans"
 
     old_container_id=$(docker ps -f name="$service" -q | tail -n1)
 
@@ -93,7 +93,7 @@ function upgrade() {
       docker rm "$old_container_id"
     fi
 
-    eval "$compose up -d --no-deps --scale $service=1 --no-recreate $service"
+    eval "$compose up -d --no-deps --scale $service=1 --no-recreate $service --remove-orphans"
 
     echo "✅ The $service service has been upgraded successfully!"
   done
@@ -115,7 +115,7 @@ function uninstall() {
   fi
 
   echo "🔴 Running irreversible prune action, please wait..."
-  eval "$compose down -v"
+  eval "$compose down -v --remove-orphans"
 
   if [[ -n $CLEANUP_IMAGES ]]; then
     echo "🗑 Removing all unused images..."
@@ -135,11 +135,11 @@ shift
 case $COMMAND in
 start)
   echo "🟢 Starting Turnly services..."
-  eval "$compose up -d --renew-anon-volumes $*"
+  eval "$compose up -d --remove-orphans $*"
   ;;
 stop)
   echo "🟠 Stopping Turnly services..."
-  eval "$compose down"
+  eval "$compose down --remove-orphans"
   ;;
 prune)
   echo "🔴 Pruning Turnly services..."
