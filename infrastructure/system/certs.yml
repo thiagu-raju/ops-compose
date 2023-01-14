@@ -5,9 +5,9 @@ services:
     image: stedolan/jq
     entrypoint: ["/bin/bash", "/extract-certs.sh"]
     volumes:
-      - ./certs/extract-certs.sh:/extract-certs.sh
-      - ./certs/data:/certs/data:ro
-      - ./certs/domains:/certs/domains
+      - ./etc/certs/extract-certs.sh:/extract-certs.sh
+      - ./etc/certs/data:/certs/data:ro
+      - ./etc/certs/domains:/certs/domains
     depends_on:
       gateway:
         condition: service_healthy

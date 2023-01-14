@@ -26,7 +26,7 @@ function upgrade() {
   NO_RESTART_SERVICES+=("gateway.yml")
 
   APP_VERSION=$(grep "APP_VERSION=" .env | awk -F '=' '{print $2}' | xargs)
-  LATEST_VERSION=$(cat ./config/VERSION)
+  LATEST_VERSION=$(cat ./etc/VERSION)
 
   if [[ $APP_VERSION != "$LATEST_VERSION" ]]; then
     echo "🔔 Warning: If the environment variables have changed, you may need update the .env file before running this command."
@@ -54,8 +54,11 @@ function upgrade() {
     echo "🔔 Warning: The infrastructure services are not restarted by default. If you want to upgrade them, run this command with the --upgrade-all flag."
   fi
 
-  echo "🚀 Restarting services with zero-downtime deployment strategy, with $APP_VERSION version..."
+  echo "🕐 Pulling latest images for Turnly services..."
+  eval "$compose pull --ignore-pull-failures --quiet"
+  echo "✅ Pulling latest images for Turnly services completed successfully!"
 
+  echo "🚀 Restarting services with zero-downtime deployment strategy, with $APP_VERSION version..."
   services=$(eval "$compose" config --services)
 
   for service in $services; do
@@ -72,16 +75,6 @@ function upgrade() {
     if [[ -n $old_container_id ]]; then
       reached_timeout=12
       wait_period=0
-
-      SLOWLY_STARTING_SERVICES=(
-        "widgets-api"
-        "helpdesk-api"
-        "widgets-realtime-api"
-      )
-
-      if [[ "${SLOWLY_STARTING_SERVICES[*]}" == *"$service"* ]] &>/dev/null; then
-        reached_timeout=32
-      fi
 
       while true; do
         wait_period=$((wait_period + 4))

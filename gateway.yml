@@ -50,7 +50,7 @@ services:
       DO_AUTH_TOKEN: ${DO_AUTH_TOKEN}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs/data:/certs/data
+      - ./etc/certs/data:/certs/data
 
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

@@ -8,7 +8,7 @@ services:
     image: ghcr.io/turnly/iam:${APP_VERSION}
     command: start --import-realm --optimized --https-port=443 --https-certificate-file=/etc/x509/https/${APP_DOMAIN}.crt --https-certificate-key-file=/etc/x509/https/${APP_DOMAIN}.key
     volumes:
-      - ./certs/domains:/etc/x509/https:ro
+      - ./etc/certs/domains:/etc/x509/https:ro
 
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

@@ -5,5 +5,5 @@
 !.env.example
 
 # Certs
-certs/**/*
-!certs/extract-certs.sh
+etc/certs/**/*
+!etc/certs/extract-certs.sh
