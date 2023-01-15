@@ -34,8 +34,11 @@ services:
 
       - traefik.http.routers.iam-public.tls=true
 
+      - traefik.http.middlewares.redirect-middleware.redirectregex.regex=^https:\\/\\/([^\\/]+)\\/?$$
+      - traefik.http.middlewares.redirect-middleware.redirectregex.replacement=https://$$1/realms/turnly/account
+
       - traefik.http.routers.iam-public.entrypoints=web,websecure
       - traefik.http.routers.iam-public.service=iam-public
       - traefik.http.services.iam-public.loadbalancer.server.port=8080
       - traefik.http.routers.iam-public.rule=Host(`${IAM_HOSTNAME}`) && PathPrefix(`/admin`, `/js`, `/realms`, `/resources`, `/robots.txt`)
-      - traefik.http.routers.iam-public.middlewares=server-error-middleware
+      - traefik.http.routers.iam-public.middlewares=server-error-middleware,redirect-middleware
