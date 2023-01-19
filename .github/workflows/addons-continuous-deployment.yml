@@ -1,0 +1,14 @@
+name: 🚀 CD - Addons Continuous Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deployment:
+    runs-on: stage
+    steps:
+      - name: 📦 Pulling changes from Compose Operator...
+        run: cd /opt/turnly && git pull origin main
+
+      - name: 📡 Upgrading Apps services...
+        run: cd /opt/turnly && bash compose.sh upgrade -s addons --force

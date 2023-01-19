@@ -59,7 +59,24 @@ function upgrade() {
   echo "✅ Pulling latest images for Turnly services completed successfully!"
 
   echo "🚀 Restarting services with zero-downtime deployment strategy, with $APP_VERSION version..."
-  services=$(eval "$compose" config --services)
+  services=""
+
+  if [[ $* == *"-s"* ]]; then
+    while getopts "s:" opt; do
+      case $opt in
+      s)
+        services="$services $OPTARG"
+        ;;
+      \?) ;;
+      esac
+    done
+
+    echo "🔔 You've specified the following services to upgrade: $services"
+  fi
+
+  all_services=$(eval "$compose" config --services)
+
+  [[ -z $services ]] && services=$all_services
 
   for service in $services; do
     if [[ "${NO_RESTART_SERVICES[*]}" == *"$service"* ]] &>/dev/null; then
@@ -67,35 +84,40 @@ function upgrade() {
       continue
     fi
 
-    echo "🚀 Bring a new container up with the new image for the $service service..."
-    eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service --remove-orphans"
-
-    old_container_id=$(docker ps -f name="$service" -q | tail -n1)
-
-    if [[ -n $old_container_id ]]; then
-      reached_timeout=12
-      wait_period=0
-
-      while true; do
-        wait_period=$((wait_period + 4))
-
-        if [ $wait_period -gt $reached_timeout ]; then
-          echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container for the $service service..."
-          break
-        else
-          echo "🕐 Waiting $reached_timeout seconds for the new container for the $service service to be ready, then we'll bring down the old one..."
-          sleep 4
-        fi
-      done
-
-      echo "🗑 Bringing down old container for the $service service..."
-      docker stop "$old_container_id"
-      docker rm "$old_container_id"
+    if [[ $all_services != *"$service"* ]]; then
+      echo "🔔 The $service service does not exist. Skipping..."
+      continue
     fi
 
-    eval "$compose up -d --no-deps --scale $service=1 --no-recreate $service --remove-orphans"
+      echo "🚀 Bring a new container up with the new image for the $service service..."
+      eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service --remove-orphans"
 
-    echo "✅ The $service service has been upgraded successfully!"
+      old_container_id=$(docker ps -f name="$service" -q | tail -n1)
+
+      if [[ -n $old_container_id ]]; then
+        reached_timeout=12
+        wait_period=0
+
+        while true; do
+          wait_period=$((wait_period + 4))
+
+          if [ $wait_period -gt $reached_timeout ]; then
+            echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container for the $service service..."
+            break
+          else
+            echo "🕐 Waiting $reached_timeout seconds for the new container for the $service service to be ready, then we'll bring down the old one..."
+            sleep 4
+          fi
+        done
+
+        echo "🗑 Bringing down old container for the $service service..."
+        docker stop "$old_container_id"
+        docker rm "$old_container_id"
+      fi
+
+      eval "$compose up -d --no-deps --scale $service=1 --no-recreate $service --remove-orphans"
+
+      echo "✅ The $service service has been upgraded successfully!"
   done
 
   # Run cleanup for old images
@@ -147,7 +169,7 @@ prune)
   ;;
 upgrade)
   echo "🔵 Upgrading Turnly services..."
-  upgrade
+  upgrade "$@"
   ;;
 *)
   echo "⚪ Something went wrong. Please try again."
