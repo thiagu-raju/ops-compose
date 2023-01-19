@@ -164,6 +164,16 @@ bash compose.sh upgrade --force
 bash compose.sh upgrade --upgrade-all --force
 ```
 
+Upgrade specific services with **-s** option
+
+```sh
+# Pulling latest version of Compose Operator.
+git pull origin main
+
+# Run upgrade command
+bash compose.sh upgrade -s widgets-api -s queuing-system --force
+```
+
 ___
 
 ### Pruning (Dangerous)
