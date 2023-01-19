@@ -1,4 +1,4 @@
-name: 🚀 CD - Addons Continuous Deployment
+name: 🚀 CD - IAM Continuous Deployment
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
       run:
         working-directory: /opt/turnly
     steps:
-      - name: 📡 Deploying addons service...
+      - name: 📡 Deploying iam service...
         run: |
           git pull origin main
-          bash compose.sh upgrade -s addons --force
+          bash compose.sh upgrade -s iam --force

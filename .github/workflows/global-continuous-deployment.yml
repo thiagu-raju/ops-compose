@@ -13,9 +13,11 @@ on:
 jobs:
   deployment:
     runs-on: stage
+    defaults:
+      run:
+        working-directory: /opt/turnly
     steps:
-      - name: 📦 Pulling changes from Compose Operator...
-        run: cd /opt/turnly && git pull origin main
-
-      - name: 📡 Upgrading Apps services...
-        run: cd /opt/turnly && bash compose.sh upgrade --force
+      - name: 📡 Deploying all services...
+        run: |
+          git pull origin main
+          bash compose.sh upgrade --force

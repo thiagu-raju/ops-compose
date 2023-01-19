@@ -1,0 +1,16 @@
+name: 🚀 CD - Platform Realtime API Continuous Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deployment:
+    runs-on: stage
+    defaults:
+      run:
+        working-directory: /opt/turnly
+    steps:
+      - name: 📡 Deploying platform-realtime-api service...
+        run: |
+          git pull origin main
+          bash compose.sh upgrade -s platform-realtime-api --force
