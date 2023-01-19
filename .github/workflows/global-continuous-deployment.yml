@@ -1,4 +1,4 @@
-name: 🚀 CD - Continuous Deployment
+name: 🚀 CD - Global Continuous Deployment
 
 on:
   workflow_dispatch:

@@ -62,7 +62,7 @@ function upgrade() {
   services=""
 
   if [[ $* == *"-s"* ]]; then
-    while getopts "s:" opt; do
+    while getopts ":s:" opt; do
       case $opt in
       s)
         services="$services $OPTARG"
@@ -89,35 +89,35 @@ function upgrade() {
       continue
     fi
 
-      echo "🚀 Bring a new container up with the new image for the $service service..."
-      eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service --remove-orphans"
+    echo "🚀 Bring a new container up with the new image for the $service service..."
+    eval "$compose up -d --no-deps --scale $service=2 --no-recreate $service --remove-orphans"
 
-      old_container_id=$(docker ps -f name="$service" -q | tail -n1)
+    old_container_id=$(docker ps -f name="$service" -q | tail -n1)
 
-      if [[ -n $old_container_id ]]; then
-        reached_timeout=12
-        wait_period=0
+    if [[ -n $old_container_id ]]; then
+      reached_timeout=12
+      wait_period=0
 
-        while true; do
-          wait_period=$((wait_period + 4))
+      while true; do
+        wait_period=$((wait_period + 4))
 
-          if [ $wait_period -gt $reached_timeout ]; then
-            echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container for the $service service..."
-            break
-          else
-            echo "🕐 Waiting $reached_timeout seconds for the new container for the $service service to be ready, then we'll bring down the old one..."
-            sleep 4
-          fi
-        done
+        if [ $wait_period -gt $reached_timeout ]; then
+          echo "✅ The timeout of $reached_timeout seconds has been reached. We'll bring down the old container for the $service service..."
+          break
+        else
+          echo "🕐 Waiting $reached_timeout seconds for the new container for the $service service to be ready, then we'll bring down the old one..."
+          sleep 4
+        fi
+      done
 
-        echo "🗑 Bringing down old container for the $service service..."
-        docker stop "$old_container_id"
-        docker rm "$old_container_id"
-      fi
+      echo "🗑 Bringing down old container for the $service service..."
+      docker stop "$old_container_id"
+      docker rm "$old_container_id"
+    fi
 
-      eval "$compose up -d --no-deps --scale $service=1 --no-recreate $service --remove-orphans"
+    eval "$compose up -d --no-deps --scale $service=1 --no-recreate $service --remove-orphans"
 
-      echo "✅ The $service service has been upgraded successfully!"
+    echo "✅ The $service service has been upgraded successfully!"
   done
 
   # Run cleanup for old images
